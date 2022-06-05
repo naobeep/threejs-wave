@@ -1,0 +1,13 @@
+#webGl {
+  position: absolute;
+  bottom: 50%;
+  right: 50%;
+  transform: translate(50%, 50%);
+  text-align: center;
+  width: 1200px;
+  height: 600px;
+}
+
+canvas {
+  position: absolute;
+}
