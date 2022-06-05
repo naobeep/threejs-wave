@@ -15,7 +15,7 @@ const scene = new THREE.Scene();
 const loader = new THREE.TextureLoader();
 
 // カメラ設定
-const dist = 12.5; //canvasサイズより少し小さく表示される位置
+const dist = 11.521; //職人技によるカメラの距離,何故この数値になるのかは不明
 const camera = new THREE.PerspectiveCamera(
   75,
   width / height,
@@ -84,24 +84,28 @@ const effectType = [
 let count = 1;
 const effectFuncs = {
   blockWave(elapsedTime) {
+    this.zoomOut(1);
     for (let i = 0; i < count; i++) {
       boxes[i].position.z = Math.sin(elapsedTime - i);
     }
     count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
   flagWave(elapsedTime) {
+    this.zoomOut(1);
     for (let i = 0; i < count; i++) {
       boxes[i].position.z = Math.sin(elapsedTime + i * 6);
     }
     count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
   mosaicWave(elapsedTime) {
+    this.zoomOut(1);
     for (let i = 0; i < count; i++) {
       boxes[i].position.z = Math.sin(elapsedTime + i * 3);
     }
     count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
   rowWave(elapsedTime) {
+    this.zoomOut(1);
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < columns; j++) {
         boxes[j + columns * i].position.z = Math.sin(elapsedTime - i);
@@ -109,13 +113,22 @@ const effectFuncs = {
     }
   },
   columnWave(elapsedTime) {
+    this.zoomOut(1);
     for (let i = 0; i < columns; i++) {
       for (let j = 0; j < rows; j++) {
         boxes[i + columns * j].position.z = Math.sin(elapsedTime - i);
       }
     }
   },
+  zoomOut(z) {
+    camera.position.z =
+      camera.position.z < dist + z ? (camera.position.z += 0.05) : dist + z;
+  },
+  zoomIn() {
+    camera.position.z > dist ? (camera.position.z -= 0.05) : dist;
+  },
   noWave() {
+    this.zoomIn();
     for (let i = 0; i < columns * rows; i++) {
       boxes[i].position.z = boxes[i].position.z * 0.97;
     }
