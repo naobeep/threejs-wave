@@ -1,12 +1,31 @@
+.container {
+  text-align: center;
+}
+
+h1,
+h2 {
+  text-shadow: 1px 1px #fff, 1px -1px #fff, -1px 1px #fff, -1px -1px #fff;
+  z-index: 100;
+}
+
+h1 {
+  font-size: 6rem;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin: 0 0 50px;
+  padding: 0;
+  font-size: 4rem;
+}
+
 #webGl {
   position: absolute;
-  top:130px;
+  top: 0;
   right: 50%;
   transform: translateX(50%);
   text-align: center;
   width: 100%;
   /* background: #ccc; */
-}
-canvas {
-  position: absolute;
+  z-index: -100;
 }

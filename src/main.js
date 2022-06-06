@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const canvas = document.querySelector('#webGl');
+const h2 = document.querySelector('#h2');
+const dummyTexture = './assets/images/hero_pieces/000.jpg';
 const boxes = [];
 
 // settings
@@ -37,22 +39,22 @@ for (let i = 0; i < rows * columns; i++) {
   const num = ('000' + (i + 1)).slice(-3);
   const material = [
     new THREE.MeshBasicMaterial({
-      map: loader.load('./assets/images/hero_pieces/000.jpg'),
+      map: loader.load(dummyTexture),
     }),
     new THREE.MeshBasicMaterial({
-      map: loader.load('./assets/images/hero_pieces/000.jpg'),
+      map: loader.load(dummyTexture),
     }),
     new THREE.MeshBasicMaterial({
-      map: loader.load('./assets/images/hero_pieces/000.jpg'),
+      map: loader.load(dummyTexture),
     }),
     new THREE.MeshBasicMaterial({
-      map: loader.load('./assets/images/hero_pieces/000.jpg'),
+      map: loader.load(dummyTexture),
     }),
     new THREE.MeshBasicMaterial({
       map: loader.load(`./assets/images/hero_pieces/${num}.jpg`),
     }),
     new THREE.MeshBasicMaterial({
-      map: loader.load('./assets/images/hero_pieces/000.jpg'),
+      map: loader.load(dummyTexture),
     }),
   ];
   boxes[i] = new THREE.Mesh(boxGeometry, material);
@@ -72,40 +74,41 @@ scene.add(ambientLight);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
+const zoom = {
+  in() {
+    camera.position.z > dist ? (camera.position.z -= 0.05) : dist;
+  },
+  out(z) {
+    camera.position.z =
+      camera.position.z < dist + z ? (camera.position.z += 0.05) : dist + z;
+  },
+};
 // sinカーブでZ軸を波立たせる
-const effectType = [
-  'blockWave',
-  'flagWave',
-  'mosaicWave',
-  'rowWave',
-  'columnWave',
-  'noWave',
-];
 let count = 1;
 const effectFuncs = {
   blockWave(elapsedTime) {
-    this.zoomOut(1);
+    zoom.out(1);
     for (let i = 0; i < count; i++) {
       boxes[i].position.z = Math.sin(elapsedTime - i);
     }
     count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
   flagWave(elapsedTime) {
-    this.zoomOut(1);
+    zoom.out(1);
     for (let i = 0; i < count; i++) {
       boxes[i].position.z = Math.sin(elapsedTime + i * 6);
     }
     count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
   mosaicWave(elapsedTime) {
-    this.zoomOut(1);
+    zoom.out(1);
     for (let i = 0; i < count; i++) {
       boxes[i].position.z = Math.sin(elapsedTime + i * 3);
     }
     count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
   rowWave(elapsedTime) {
-    this.zoomOut(1);
+    zoom.out(1);
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < columns; j++) {
         boxes[j + columns * i].position.z = Math.sin(elapsedTime - i);
@@ -113,22 +116,15 @@ const effectFuncs = {
     }
   },
   columnWave(elapsedTime) {
-    this.zoomOut(1);
+    zoom.out(1);
     for (let i = 0; i < columns; i++) {
       for (let j = 0; j < rows; j++) {
         boxes[i + columns * j].position.z = Math.sin(elapsedTime - i);
       }
     }
   },
-  zoomOut(z) {
-    camera.position.z =
-      camera.position.z < dist + z ? (camera.position.z += 0.05) : dist + z;
-  },
-  zoomIn() {
-    camera.position.z > dist ? (camera.position.z -= 0.05) : dist;
-  },
-  noWave() {
-    this.zoomIn();
+  calmDown() {
+    zoom.in();
     for (let i = 0; i < columns * rows; i++) {
       boxes[i].position.z = boxes[i].position.z * 0.97;
     }
@@ -136,19 +132,20 @@ const effectFuncs = {
 };
 
 // 10秒ごとにエフェクトを変更
-const noWaveNum = effectType.length - 1;
-let select = noWaveNum;
+const effectLength = Object.keys(effectFuncs).length - 1;
+let select = 'calmDown';
 setInterval(() => {
+  const rnd = Math.floor(Math.random() * effectLength);
   count = 1;
-  select =
-    select === noWaveNum ? Math.floor(Math.random() * noWaveNum) : noWaveNum;
+  select = select === 'calmDown' ? Object.keys(effectFuncs)[rnd] : 'calmDown';
+  h2.textContent = `effect: ${select}`;
 }, 10000);
 
 const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
-  effectFuncs[effectType[select]](elapsedTime);
+  effectFuncs[select](elapsedTime);
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
