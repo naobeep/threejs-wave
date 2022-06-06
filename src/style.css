@@ -29,3 +29,11 @@ h2 {
   /* background: #ccc; */
   z-index: -100;
 }
+
+img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+}
