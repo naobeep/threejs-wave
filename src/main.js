@@ -5,6 +5,7 @@ const canvas = document.querySelector('#webGl');
 const h2 = document.querySelector('#h2');
 const dummyTexture = './assets/images/hero_pieces/000.jpg';
 const boxes = [];
+let velocity = 1;
 
 // settings
 const width = canvas.clientWidth;
@@ -33,6 +34,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(width, height);
 renderer.setPixelRatio(devicePixelRatio);
 
+// テクスチャ設定
 const boxGeometry = new THREE.BoxGeometry(1, 1, 10);
 for (let i = 0; i < rows * columns; i++) {
   const num = ('000' + (i + 1)).slice(-3);
@@ -58,6 +60,8 @@ for (let i = 0; i < rows * columns; i++) {
   ];
   boxes[i] = new THREE.Mesh(boxGeometry, material);
 }
+
+// ボックスを格子状に敷き詰める処理
 let i = 0;
 for (let y = rows; y > 0; y--) {
   for (let x = 0; x < columns; x++) {
@@ -67,9 +71,11 @@ for (let y = rows; y > 0; y--) {
   }
 }
 
+// 光源設定
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
 scene.add(ambientLight);
 
+// zoom in/out
 const zoom = {
   in() {
     camera.position.z > dist ? (camera.position.z -= 0.05) : dist;
@@ -79,35 +85,33 @@ const zoom = {
       camera.position.z < dist + z ? (camera.position.z += 0.05) : dist + z;
   },
 };
-// sinカーブでZ軸を波立たせる
-let count = 1;
+
+// effectオブジェクト
 const effectFuncs = {
   blockWave(elapsedTime) {
     zoom.out(1);
-    for (let i = 0; i < count; i++) {
-      boxes[i].position.z = Math.sin(elapsedTime - i);
+    for (let i = 0; i < boxes.length; i++) {
+      boxes[i].position.z = Math.sin(elapsedTime - i) * (1 - velocity);
     }
-    count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
   flagWave(elapsedTime) {
     zoom.out(1);
-    for (let i = 0; i < count; i++) {
-      boxes[i].position.z = Math.sin(elapsedTime + i * 6);
+    for (let i = 0; i < boxes.length; i++) {
+      boxes[i].position.z = Math.sin(elapsedTime + i * 6) * (1 - velocity);
     }
-    count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
-  mosaicWave(elapsedTime) {
+  checkWave(elapsedTime) {
     zoom.out(1);
-    for (let i = 0; i < count; i++) {
-      boxes[i].position.z = Math.sin(elapsedTime + i * 3);
+    for (let i = 0; i < boxes.length; i++) {
+      boxes[i].position.z = Math.sin(elapsedTime + i * 3) * (1 - velocity);
     }
-    count = count < columns * rows ? (count = count + 1) : columns * rows;
   },
   rowWave(elapsedTime) {
     zoom.out(1);
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < columns; j++) {
-        boxes[j + columns * i].position.z = Math.sin(elapsedTime - i);
+        boxes[j + columns * i].position.z =
+          Math.sin(elapsedTime - i) * (1 - velocity);
       }
     }
   },
@@ -115,7 +119,8 @@ const effectFuncs = {
     zoom.out(1);
     for (let i = 0; i < columns; i++) {
       for (let j = 0; j < rows; j++) {
-        boxes[i + columns * j].position.z = Math.sin(elapsedTime - i);
+        boxes[i + columns * j].position.z =
+          Math.sin(elapsedTime - i) * (1 - velocity);
       }
     }
   },
@@ -132,7 +137,7 @@ const effectLength = Object.keys(effectFuncs).length - 1;
 let select = 'calmDown';
 setInterval(() => {
   const rnd = Math.floor(Math.random() * effectLength);
-  count = 1;
+  velocity = 1;
   select = select === 'calmDown' ? Object.keys(effectFuncs)[rnd] : 'calmDown';
   h2.textContent = `effect: ${select}`;
 }, 10000);
@@ -141,6 +146,7 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+  velocity *= 0.995;
   effectFuncs[select](elapsedTime);
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
