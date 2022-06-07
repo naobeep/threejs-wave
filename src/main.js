@@ -5,7 +5,8 @@ const canvas = document.querySelector('#webGl');
 const h2 = document.querySelector('#h2');
 const dummyTexture = './assets/images/hero_pieces/000.jpg';
 const boxes = [];
-let velocity = 1;
+const mag = 1;
+let resistor = mag;
 
 // settings
 const width = canvas.clientWidth;
@@ -75,9 +76,9 @@ for (let y = rows; y > 0; y--) {
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
 scene.add(ambientLight);
 
-// zoom in/out
+// zoom設定
 const zoom = {
-  in() {
+  reset() {
     camera.position.z > dist ? (camera.position.z -= 0.05) : dist;
   },
   out(z) {
@@ -91,19 +92,19 @@ const effectFuncs = {
   blockWave(elapsedTime) {
     zoom.out(1);
     for (let i = 0; i < boxes.length; i++) {
-      boxes[i].position.z = Math.sin(elapsedTime - i) * (1 - velocity);
+      boxes[i].position.z = Math.sin(elapsedTime - i) * (mag - resistor);
     }
   },
   flagWave(elapsedTime) {
     zoom.out(1);
     for (let i = 0; i < boxes.length; i++) {
-      boxes[i].position.z = Math.sin(elapsedTime + i * 6) * (1 - velocity);
+      boxes[i].position.z = Math.sin(elapsedTime + i * 6) * (mag - resistor);
     }
   },
   checkWave(elapsedTime) {
     zoom.out(1);
     for (let i = 0; i < boxes.length; i++) {
-      boxes[i].position.z = Math.sin(elapsedTime + i * 3) * (1 - velocity);
+      boxes[i].position.z = Math.sin(elapsedTime + i * 3) * (mag - resistor);
     }
   },
   rowWave(elapsedTime) {
@@ -111,7 +112,7 @@ const effectFuncs = {
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < columns; j++) {
         boxes[j + columns * i].position.z =
-          Math.sin(elapsedTime - i) * (1 - velocity);
+          Math.sin(elapsedTime - i) * (mag - resistor);
       }
     }
   },
@@ -120,14 +121,14 @@ const effectFuncs = {
     for (let i = 0; i < columns; i++) {
       for (let j = 0; j < rows; j++) {
         boxes[i + columns * j].position.z =
-          Math.sin(elapsedTime - i) * (1 - velocity);
+          Math.sin(elapsedTime - i) * (mag - resistor);
       }
     }
   },
   calmDown() {
-    zoom.in();
+    zoom.reset();
     for (let i = 0; i < columns * rows; i++) {
-      boxes[i].position.z = boxes[i].position.z * 0.97;
+      boxes[i].position.z = boxes[i] < 0.1 ? 0 : boxes[i].position.z * 0.97;
     }
   },
 };
@@ -137,7 +138,7 @@ const effectLength = Object.keys(effectFuncs).length - 1;
 let select = 'calmDown';
 setInterval(() => {
   const rnd = Math.floor(Math.random() * effectLength);
-  velocity = 1;
+  resistor = 1;
   select = select === 'calmDown' ? Object.keys(effectFuncs)[rnd] : 'calmDown';
   h2.textContent = `effect: ${select}`;
 }, 10000);
@@ -146,7 +147,7 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
-  velocity *= 0.995;
+  resistor = resistor < 0.1 ? 0 : resistor * 0.995;
   effectFuncs[select](elapsedTime);
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
