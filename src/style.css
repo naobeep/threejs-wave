@@ -5,7 +5,7 @@
 h1,
 h2 {
   text-shadow: 1px 1px #fff, 1px -1px #fff, -1px 1px #fff, -1px -1px #fff;
-  z-index: 100;
+  z-index: 200;
 }
 
 h1 {
