@@ -4,7 +4,8 @@
 
 h1,
 h2 {
-  text-shadow: 1px 1px #fff, 1px -1px #fff, -1px 1px #fff, -1px -1px #fff;
+  color: #fff;
+ text-shadow: 1px 1px #000, 1px -1px #000, -1px 1px #000, -1px -1px #000;
   z-index: 200;
 }
 
