@@ -1,6 +1,5 @@
 import './style.css';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const canvas = document.querySelector('#webGl');
 const h2 = document.querySelector('#h2');
@@ -70,9 +69,6 @@ for (let y = rows; y > 0; y--) {
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
 scene.add(ambientLight);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
 
 const zoom = {
   in() {
@@ -146,18 +142,8 @@ const clock = new THREE.Clock();
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
   effectFuncs[select](elapsedTime);
-  controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
 };
-
-//ブラウザのリサイズ対応
-window.addEventListener('resize', onWindowResize);
-
-function onWindowResize() {
-  renderer.setSize(width, height);
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-}
 
 tick();
