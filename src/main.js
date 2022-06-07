@@ -147,7 +147,7 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
-  resistor = resistor < 0.1 ? 0 : resistor * 0.995;
+  resistor = resistor < 0.05 ? 0 : resistor * 0.995;
   effectFuncs[select](elapsedTime);
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
