@@ -7,7 +7,7 @@ const dummyTexture = './assets/images/hero_pieces/000.jpg';
 const boxes = [];
 const mag = 1;
 let resistor = mag;
-let interval = 3000;
+let interval = 10000;
 let select = 'calmDown';
 
 // settings
@@ -109,12 +109,6 @@ const effectFuncs = {
       boxes[i].position.z = Math.sin(elapsedTime + i * 5) * (mag - resistor);
     }
   },
-  flagWave(elapsedTime) {
-    zoom.out(1);
-    for (let i = 0; i < boxes.length; i++) {
-      boxes[i].position.z = Math.sin(elapsedTime + i * 6) * (mag - resistor);
-    }
-  },
   stratumWave(elapsedTime) {
     zoom.out(1);
     for (let i = 0; i < boxes.length; i++) {
@@ -131,6 +125,12 @@ const effectFuncs = {
     zoom.out(1);
     for (let i = 0; i < boxes.length; i++) {
       boxes[i].position.z = Math.sin(elapsedTime + i * 22) * (mag - resistor);
+    }
+  },
+  flagWave(elapsedTime) {
+    zoom.out(1);
+    for (let i = 0; i < boxes.length; i++) {
+      boxes[i].position.z = Math.sin(elapsedTime + i / 3) * (mag - resistor);
     }
   },
   rowWave(elapsedTime) {
