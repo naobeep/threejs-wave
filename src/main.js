@@ -89,10 +89,22 @@ const zoom = {
 
 // effectオブジェクト
 const effectFuncs = {
-  blockWave(elapsedTime) {
+  defaultWave(elapsedTime) {
     zoom.out(1);
     for (let i = 0; i < boxes.length; i++) {
       boxes[i].position.z = Math.sin(elapsedTime - i) * (mag - resistor);
+    }
+  },
+  checkWave(elapsedTime) {
+    zoom.out(1);
+    for (let i = 0; i < boxes.length; i++) {
+      boxes[i].position.z = Math.sin(elapsedTime + i * 3) * (mag - resistor);
+    }
+  },
+  shredderWave(elapsedTime) {
+    zoom.out(1);
+    for (let i = 0; i < boxes.length; i++) {
+      boxes[i].position.z = Math.sin(elapsedTime + i * 5) * (mag - resistor);
     }
   },
   flagWave(elapsedTime) {
@@ -101,10 +113,22 @@ const effectFuncs = {
       boxes[i].position.z = Math.sin(elapsedTime + i * 6) * (mag - resistor);
     }
   },
-  checkWave(elapsedTime) {
+  stratumWave(elapsedTime) {
     zoom.out(1);
     for (let i = 0; i < boxes.length; i++) {
-      boxes[i].position.z = Math.sin(elapsedTime + i * 3) * (mag - resistor);
+      boxes[i].position.z = Math.sin(elapsedTime + i * 13) * (mag - resistor);
+    }
+  },
+  sliceWave(elapsedTime) {
+    zoom.out(1);
+    for (let i = 0; i < boxes.length; i++) {
+      boxes[i].position.z = Math.sin(elapsedTime + i * 19) * (mag - resistor);
+    }
+  },
+  scissorsWave(elapsedTime) {
+    zoom.out(1);
+    for (let i = 0; i < boxes.length; i++) {
+      boxes[i].position.z = Math.sin(elapsedTime + i * 22) * (mag - resistor);
     }
   },
   rowWave(elapsedTime) {
