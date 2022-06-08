@@ -7,6 +7,8 @@ const dummyTexture = './assets/images/hero_pieces/000.jpg';
 const boxes = [];
 const mag = 1;
 let resistor = mag;
+let interval = 3000;
+let select = 'calmDown';
 
 // settings
 const width = canvas.clientWidth;
@@ -158,14 +160,26 @@ const effectFuncs = {
 };
 
 // 10秒ごとにエフェクトを変更
-const effectLength = Object.keys(effectFuncs).length - 1;
-let select = 'calmDown';
-setInterval(() => {
-  const rnd = Math.floor(Math.random() * effectLength);
+const effectMember = Object.keys(effectFuncs).length - 1;
+
+const variableInterval = interval => {
+  const rnd = Math.floor(Math.random() * effectMember);
   resistor = 1;
-  select = select === 'calmDown' ? Object.keys(effectFuncs)[rnd] : 'calmDown';
-  h2.textContent = `effect: ${select}`;
-}, 10000);
+
+  setTimeout(() => {
+    if (select === 'calmDown') {
+      select = Object.keys(effectFuncs)[rnd];
+      interval = 15000;
+    } else {
+      select = 'calmDown';
+      interval = 6000;
+    }
+    h2.textContent = `effect: ${select}`;
+    variableInterval(interval);
+  }, interval);
+};
+
+variableInterval(interval);
 
 const clock = new THREE.Clock();
 
