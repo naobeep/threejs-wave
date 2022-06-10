@@ -169,10 +169,10 @@ const variableInterval = interval => {
   setTimeout(() => {
     if (select === 'calmDown') {
       select = Object.keys(effectFuncs)[rnd];
-      interval = 15000;
+      interval = 21000;
     } else {
       select = 'calmDown';
-      interval = 6000;
+      interval = 9000;
     }
     h2.textContent = `effect: ${select}`;
     variableInterval(interval);
